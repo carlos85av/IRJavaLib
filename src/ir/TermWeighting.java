@@ -17,12 +17,20 @@ import java.sql.Statement;
  */
 public class TermWeighting {
 
-    public Connection conn = null;
-    public String url = "jdbc:mysql://localhost:3306/";
-    public String dbName = "KLDDBB";
-    public String driver = "com.mysql.jdbc.Driver";
-    public String userName = "root";
-    public String password = "root";
+    private Connection conn;
+    private String url;
+    private String dbName;
+    private String driver;
+    private String userName;
+    private String password;
+    
+    public TermWeighting(String url, String dbName, String user, String password){
+        this.url=url;
+        this.dbName=dbName;
+        this.userName=userName;
+        this.password=password;
+        driver="com.mysql.jdbc.Driver";
+    }
 
     public void TFIDF() throws SQLException {
 
