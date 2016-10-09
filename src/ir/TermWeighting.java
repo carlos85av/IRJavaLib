@@ -13,7 +13,7 @@ import java.sql.Statement;
 
 /**
  *
- * @author carlos
+ * @author Carlos Arancón del Valle
  */
 public class TermWeighting {
 
@@ -23,82 +23,78 @@ public class TermWeighting {
     private String driver;
     private String userName;
     private String password;
-    
-    public TermWeighting(String url, String dbName, String user, String password){
-        this.url=url;
-        this.dbName=dbName;
-        this.userName=userName;
-        this.password=password;
-        driver="com.mysql.jdbc.Driver";
+
+    public TermWeighting(String url, String dbName, String user, String password) {
+        this.url = url;
+        this.dbName = dbName;
+        this.userName = userName;
+        this.password = password;
+        driver = "com.mysql.jdbc.Driver";
     }
 
-    public void TFIDF() throws SQLException {
+    public void KLD(String fichero) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-        try {
-            Class.forName(driver).newInstance();
-            conn = DriverManager.getConnection(url + dbName, userName, password);
-        } catch (Exception e) {
-            System.err.println("Exception: " + e.getMessage());
+        String cuentaReg = "", cuentaRegFic = "", cuentaLemFic = "", cuentaLem = "", ordenUpdate = "";
+        Statement instCuentaReg = null, instCuentaRegFic = null, instCuentaLemFic = null, instCuentaLem = null, instrUpdt = null;
+        ResultSet rsCuentaReg = null, rsCuentaRegFic = null, rsCuentaLemFic = null, rsCuentaLem = null;
+        String nC = "", ntC = "", ntD = "";
+        String tag = "", lemma = "", form = "", valor = "", indice = "";
+        int nD = 0;
+        Double kld = 0.0, pdt = 0.0, pct = 0.0;
+
+        Class.forName(driver).newInstance();
+        conn = DriverManager.getConnection(url + dbName, userName, password);
+
+        cuentaReg = "SELECT SUM(TABLE_ROWS) TOTAL_REGS FROM information_schema.`TABLES` T WHERE TABLE_SCHEMA = \'" + dbName + "\';";
+        instCuentaReg = (Statement) conn.createStatement();
+        rsCuentaReg = instCuentaReg.executeQuery(cuentaReg);
+        instCuentaReg = null;
+        while (rsCuentaReg.next()) {
+            nC = rsCuentaReg.getString(1);
         }
 
-        String ordenSelect = "", ordenUpdate = "", ordencount1 = "";
-        Statement instruccion = null, instruccion1 = null, instruccion2 = null;
-        ResultSet bdatos = null, rc1 = null;
+        cuentaRegFic = "SELECT * FROM " + fichero + ";";
+        instCuentaRegFic = (Statement) conn.createStatement();
+        rsCuentaRegFic = instCuentaRegFic.executeQuery(cuentaRegFic);
+        instCuentaRegFic = null;
+        nD = 0;
+        while (rsCuentaRegFic.next()) {
+            tag = rsCuentaRegFic.getString(1);
+            lemma = rsCuentaRegFic.getString(2);
+            form = rsCuentaRegFic.getString(3);
+            valor = rsCuentaRegFic.getString(4);
+            indice = rsCuentaRegFic.getString(5);
+            nD = nD + 1;
 
-        try {
-            ordenSelect = "select * from WORDS_kld;";
-            instruccion = (Statement) conn.createStatement();
-            bdatos = instruccion.executeQuery(ordenSelect);
-            instruccion = null;
-
-            String idf = "", kld = "", indice = "", ntD = "", lemma = "", nomfic = "";
-            double kldidf = 0;
-            int contador = 0;
-
-            while (bdatos.next()) {
-                indice = bdatos.getString(8);
-                idf = bdatos.getString(6);
-                kld = bdatos.getString(5);
-                lemma = bdatos.getString(2);
-                nomfic = bdatos.getString(4);
-
-                ordencount1 = "select count(*) from WORDS_kld where lemma=\"" + lemma + "\" and nomfic like \"" + nomfic + "\";";
-                instruccion1 = (Statement) conn.createStatement();
-                rc1 = instruccion1.executeQuery(ordencount1);
-                instruccion1 = null;
-                while (rc1.next()) {
-                    ntD = rc1.getString(1);
-                }
-
-                kldidf = Double.parseDouble(idf) * Double.parseDouble(ntD);
-
-                try {
-                    ordenUpdate = "UPDATE WORDS_kld SET valorKLDIDF=\"" + kldidf + "\" WHERE indice like \"" + indice + "\";";
-                    instruccion2 = (Statement) conn.createStatement();
-                    instruccion2.executeUpdate(ordenUpdate);
-
-                    instruccion2 = null;
-                    
-                    contador = contador + 1;
-
-                } catch (SQLException er) {
-                    // TODO Auto-generated catch block
-                    er.printStackTrace();
-                }
-
+            cuentaLemFic = "SELECT COUNT(*) FROM " + fichero + " WHERE lemma like \"" + lemma + "\";";
+            instCuentaLemFic = (Statement) conn.createStatement();
+            rsCuentaLemFic = instCuentaLemFic.executeQuery(cuentaLemFic);
+            instCuentaLemFic = null;
+            while (rsCuentaLemFic.next()) {
+                ntD = rsCuentaLemFic.getString(1);
             }
 
-        } catch (SQLException er) {
-            // TODO Auto-generated catch block
-            er.printStackTrace();
+            cuentaLem = "SELECT COUNT(*) FROM Recopila WHERE lemma like \"" + lemma + "\";";
+            instCuentaLem = (Statement) conn.createStatement();
+            rsCuentaLem = instCuentaLem.executeQuery(cuentaLem);
+            instCuentaLem = null;
+            while (rsCuentaLem.next()) {
+                ntC = rsCuentaLem.getString(1);
+            }
+
+            pdt = Double.parseDouble(ntD) / nD;
+            pct = Double.parseDouble(ntC) / Double.parseDouble(nC);
+
+            kld = pdt * (Math.log10(pdt / pct));
+
+            ordenUpdate = "UPDATE "+fichero + " SET valor=\"" + kld + "\" WHERE indice=\"" + indice + "\";";
+            instrUpdt = (Statement) conn.createStatement();
+            instrUpdt.executeUpdate(ordenUpdate);
+
+            instrUpdt = null;
+
         }
 
-        try {
-            conn.close();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
 }
