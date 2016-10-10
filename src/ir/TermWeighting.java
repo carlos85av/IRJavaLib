@@ -74,7 +74,7 @@ public class TermWeighting {
                 ntD = rsCuentaLemFic.getString(1);
             }
 
-            cuentaLem = "SELECT COUNT(*) FROM Recopila WHERE lemma like \"" + lemma + "\";";
+            cuentaLem = "SELECT COUNT(*) FROM TODO WHERE lemma like \"" + lemma + "\";";
             instCuentaLem = (Statement) conn.createStatement();
             rsCuentaLem = instCuentaLem.executeQuery(cuentaLem);
             instCuentaLem = null;

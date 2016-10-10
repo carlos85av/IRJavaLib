@@ -24,12 +24,11 @@ class Lematizacion {
     private String FREELINGDIR;
     private String DATA;
     private String LANG;
-    private String nomFic;
-    private String lineaPal = "";
+    private String nomfic;
+    private String lineaPal = "", lineaPal2="";
 
     private boolean reconocimientoMultiples;
 
-    String tag, lemma, form, nomfic, indice;
     double valor;
 
     public Lematizacion(boolean multiple) {
@@ -40,10 +39,10 @@ class Lematizacion {
 
     }
 
-    public String morfologico(String line) throws IOException {
+    public String[] morfologico(String line, String nomfic) throws IOException {
         //System.loadLibrary("freeling_javaAPI");
 
-        this.nomFic = nomFic;
+        this.nomfic = nomfic;
 
         System.load("/home/carlos/freeling/APIs/java/" + "libfreeling_javaAPI.so");
 
@@ -109,7 +108,8 @@ class Lematizacion {
 
         }
 
-        return lineaPal.substring(0,lineaPal.length()-1);
+        String lp[]={lineaPal.substring(0,lineaPal.length()-1),lineaPal2.substring(0,lineaPal.length()-1)};
+        return lp;
     }
 
     FileWriter fw;
@@ -145,7 +145,7 @@ class Lematizacion {
     }
 
     public void añadirPalabra(Word w) throws IOException {
-
+        String tag, lemma, form, indice;
         tag = w.getTag();
         lemma = w.getLemma();
         form = w.getForm();
@@ -166,8 +166,8 @@ class Lematizacion {
             form = "\\\\";
         }
 
-        lineaPal = lineaPal + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + valor + ",\"" + indice + "\"),";
-
+        lineaPal = lineaPal + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + valor + "," + indice + "),";
+        lineaPal2 = lineaPal2 + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + valor + ",\"" +nomfic+ "\"," + indice + "),";
     }
 
 }
