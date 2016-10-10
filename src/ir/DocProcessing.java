@@ -105,8 +105,10 @@ public class DocProcessing {
 
             System.out.println("Introducido el fichero " + nomfic.replace(".parseado.txt", ""));
 
-            System.runFinalization();
-            System.gc();
+            if (i % 25 == 0) {
+                System.runFinalization();
+                System.gc();
+            }
 
         }
 
