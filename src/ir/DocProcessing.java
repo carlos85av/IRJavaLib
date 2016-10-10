@@ -59,10 +59,10 @@ public class DocProcessing {
 
         conn = DriverManager.getConnection(url + dbName, userName, password);
 
-//        ord = "CREATE TABLE TODO ( tag VARCHAR(50) NULL , lemma VARCHAR(50) NOT NULL , form VARCHAR(50) NULL , valor DOUBLE NOT NULL DEFAULT '0' , fichero VARCHAR(50) NOT NULL, indice INT NOT NULL , INDEX indlemma (lemma))";
-//        stmt = (Statement) conn.createStatement();
-//        stmt.executeUpdate(ord);
-//        stmt = null;
+        ord = "CREATE TABLE TODO ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , fichero VARCHAR(50) NOT NULL, indice INT NOT NULL , INDEX indlemma (lemma))";
+        stmt = (Statement) conn.createStatement();
+        stmt.executeUpdate(ord);
+        stmt = null;
 
         for (int i = 0; i < ficheros.length; i++) {
             lm = new Lematizacion(multiterm);
@@ -83,32 +83,28 @@ public class DocProcessing {
             br.close();
             fr.close();
 
-            System.out.println(i + "- Extrayendo conceptos para " + nomfic);
 
-            insertar = lm.morfologico(contenido, nomfic);
+            insertar = lm.morfologico(contenido, nomfic.replace(".parseado.txt", ""));
             lm = null;
             System.gc();
+            
+            System.out.println(nomfic.replace(".parseado.txt", ""));
 
             
-            ord2 = "CREATE TABLE " + nomfic.replace(".parseado.txt", "") + " ( tag VARCHAR(50) NULL , lemma VARCHAR(50) NOT NULL , form VARCHAR(50) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))\";";
+            ord2 = "CREATE TABLE `"+nomfic.replace(".parseado.txt", "")+"` ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))";
             stmt2 = (Statement) conn.createStatement();
             stmt2.executeUpdate(ord2);
 
-            orden = "INSERT INTO " + nomfic.replace(".parseado.txt", "") + " (tag,lemma,form,valor,indice) VALUES (" + insertar[0] + ");";
+            orden = "INSERT INTO `" + nomfic.replace(".parseado.txt", "") + "` (tag,lemma,form,valor,indice) VALUES " + insertar[0] + ";";
             instruccion = (Statement) conn.createStatement();
             instruccion.executeUpdate(orden);
 
-//            instruccion = null;
-
-//System.out.println(insertar[1].substring(insertar[1].length()-5,insertar[1].length()));
-
-
            
-            orden2 = "INSERT INTO TODO (tag,lemma,form,valor,fichero,indice) VALUES (" + insertar[1] + ");";
+            orden2 = "INSERT INTO TODO (tag,lemma,form,valor,fichero,indice) VALUES " + insertar[1] + ";";
             instruccion2 = (Statement) conn.createStatement();
             instruccion2.executeUpdate(orden2);
 
-            System.out.println("Introducido el fichero " + nomfic);
+            System.out.println("Introducido el fichero " + nomfic.replace(".parseado.txt", ""));
 
         }
 

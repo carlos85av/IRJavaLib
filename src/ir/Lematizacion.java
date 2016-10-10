@@ -25,11 +25,10 @@ class Lematizacion {
     private String DATA;
     private String LANG;
     private String nomfic;
-    private String lineaPal = "", lineaPal2="";
+    private String lineaPal = "", lineaPal2 = "";
 
     private boolean reconocimientoMultiples;
 
-    double valor;
 
     public Lematizacion(boolean multiple) {
         FREELINGDIR = "/usr/local";
@@ -108,7 +107,10 @@ class Lematizacion {
 
         }
 
-        String lp[]={lineaPal.substring(0,lineaPal.length()-1),lineaPal2.substring(0,lineaPal.length()-1)};
+        String lp[] = new String[2];
+        lp[0] = lineaPal.substring(0, lineaPal.length() - 1);
+        lp[1] = lineaPal2.substring(0, lineaPal2.length() - 1);
+
         return lp;
     }
 
@@ -149,7 +151,6 @@ class Lematizacion {
         tag = w.getTag();
         lemma = w.getLemma();
         form = w.getForm();
-        valor = 0;
 
         DocProcessing.numPal = DocProcessing.numPal + 1;
 
@@ -166,8 +167,8 @@ class Lematizacion {
             form = "\\\\";
         }
 
-        lineaPal = lineaPal + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + valor + "," + indice + "),";
-        lineaPal2 = lineaPal2 + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + valor + ",\"" +nomfic+ "\"," + indice + "),";
+        lineaPal = lineaPal + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + 0 + "," + indice + "),";
+        lineaPal2 = lineaPal2 + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + 0 + ",\"" + nomfic + "\"," + indice + "),";
     }
 
 }
