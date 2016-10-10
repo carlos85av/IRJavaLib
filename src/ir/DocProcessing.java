@@ -83,28 +83,30 @@ public class DocProcessing {
             br.close();
             fr.close();
 
-
             insertar = lm.morfologico(contenido, nomfic.replace(".parseado.txt", ""));
             lm = null;
-            System.gc();
-            
-            System.out.println(nomfic.replace(".parseado.txt", ""));
 
-            
-            ord2 = "CREATE TABLE `"+nomfic.replace(".parseado.txt", "")+"` ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))";
+            System.out.print(i + "- ");
+
+            ord2 = "CREATE TABLE `" + nomfic.replace(".parseado.txt", "") + "` ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))";
             stmt2 = (Statement) conn.createStatement();
             stmt2.executeUpdate(ord2);
+            stmt2 = null;
 
             orden = "INSERT INTO `" + nomfic.replace(".parseado.txt", "") + "` (tag,lemma,form,valor,indice) VALUES " + insertar[0] + ";";
             instruccion = (Statement) conn.createStatement();
             instruccion.executeUpdate(orden);
+            instruccion = null;
 
-           
             orden2 = "INSERT INTO TODO (tag,lemma,form,valor,fichero,indice) VALUES " + insertar[1] + ";";
             instruccion2 = (Statement) conn.createStatement();
             instruccion2.executeUpdate(orden2);
+            instruccion2 = null;
 
             System.out.println("Introducido el fichero " + nomfic.replace(".parseado.txt", ""));
+
+            System.runFinalization();
+            System.gc();
 
         }
 
