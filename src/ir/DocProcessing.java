@@ -59,7 +59,7 @@ public class DocProcessing {
 
         conn = DriverManager.getConnection(url + dbName, userName, password);
 
-        ord = "CREATE TABLE TODO ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , fichero VARCHAR(50) NOT NULL, indice INT NOT NULL , INDEX indlemma (lemma))";
+        ord = "CREATE TABLE IF NOT EXISTS TODO ( tag VARCHAR(20) NULL , lemma VARCHAR(80) NOT NULL , form VARCHAR(80) NULL , valor DOUBLE NOT NULL DEFAULT '0' , fichero VARCHAR(150) NOT NULL, indice INT NOT NULL , INDEX indlemma (lemma))";
         stmt = (Statement) conn.createStatement();
         stmt.executeUpdate(ord);
         stmt = null;
@@ -88,7 +88,7 @@ public class DocProcessing {
 
             System.out.print(i + "- ");
 
-            ord2 = "CREATE TABLE `" + nomfic.replace(".parseado.txt", "") + "` ( tag VARCHAR(20) NULL , lemma VARCHAR(150) NOT NULL , form VARCHAR(150) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))";
+            ord2 = "CREATE TABLE IF NOT EXISTS `" + nomfic.replace(".parseado.txt", "") + "` ( tag VARCHAR(20) NULL , lemma VARCHAR(80) NOT NULL , form VARCHAR(80) NULL , valor DOUBLE NOT NULL DEFAULT '0' , indice INT NOT NULL , INDEX indlemma (lemma))";
             stmt2 = (Statement) conn.createStatement();
             stmt2.executeUpdate(ord2);
             stmt2 = null;
@@ -105,10 +105,10 @@ public class DocProcessing {
 
             System.out.println("Introducido el fichero " + nomfic.replace(".parseado.txt", ""));
 
-            if (i % 25 == 0) {
+//            if (i % 25 == 0) {
                 System.runFinalization();
                 System.gc();
-            }
+//            }
 
         }
 

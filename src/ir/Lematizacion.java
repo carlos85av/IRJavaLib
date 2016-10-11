@@ -166,6 +166,11 @@ class Lematizacion {
             lemma = "\\\\";
             form = "\\\\";
         }
+        
+        if(lemma.length()>80)
+            lemma=lemma.substring(0, 79);
+        if(form.length()>80)
+            form=form.substring(0, 79);
 
         lineaPal = lineaPal + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + 0 + "," + indice + "),";
         lineaPal2 = lineaPal2 + "(\"" + tag + "\",\"" + lemma + "\",\"" + form + "\"," + 0 + ",\"" + nomfic + "\"," + indice + "),";
